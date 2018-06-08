@@ -1,4 +1,7 @@
 import { AppRegistry } from 'react-native';
-import App from './src';
+import Navigator from './src/index';
+
+const App = Navigator;
 
 AppRegistry.registerComponent('todoApp', () => App);
+console.disableYellowBox = true;
