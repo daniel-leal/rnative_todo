@@ -9,14 +9,14 @@ import {
   Image,
   Alert,
   AsyncStorage,
-  Button,
+  Button
 } from 'react-native';
 
 import api from '../services/api';
 
-export default class Login extends Component {
+export default class Signup extends Component {
   static navigationOptions = {
-    headerTitle: 'Login',
+    headerTitle: 'Sign Up',
     headerStyle: {
       backgroundColor: '#333',
     },
@@ -26,13 +26,17 @@ export default class Login extends Component {
   state = {
     username: '',
     password: '',
+    password_confirmation: '',
     token: '',
   }
 
-  _login(navigation) {
-    api.post('/api/v1/sign_in', {
-      email: this.state.username,
-      password: this.state.password,      
+  _signup(navigation) {
+    api.post('/api/v1/sign_up', {
+      user: {
+        email: this.state.username,
+        password: this.state.password,
+        password_confirmation: this.state.password_confirmation,
+      },
     })
     .then((response) => response.data)
     .then((data) => { 
@@ -43,7 +47,16 @@ export default class Login extends Component {
       AsyncStorage.setItem('TodoApp:token', JSON.stringify(this.state.token));
       navigation.navigate('App');
     })
-    .catch((err) => { Alert.alert('Ocorreu um erro:', err.data.error) });
+    .catch((err) => { 
+      var message = ''
+
+      // Rrefinate the error message.
+      message += `\n Email: ${err.data.errors.email} \n\n`;
+      message += `Password: ${err.data.errors.password} \n\n`;
+      message += `Password: ${err.data.errors.password_confirmation}`;
+
+      Alert.alert('Ocorreu um erro:', message) 
+    });
   }
 
   render() {
@@ -76,17 +89,22 @@ export default class Login extends Component {
           onChangeText={password => this.setState({ password })}
         />
 
+        <TextInput
+          autoCapitalize="none"
+          style={styles.boxInput}
+          underlineColorAndroid="rgba(0, 0, 0, 0)"
+          placeholder="Password Confirmation"
+          placeholderTextColor="#fff"
+          value={this.state.password_confirmation}
+          secureTextEntry
+          onChangeText={password_confirmation => this.setState({ password_confirmation })}
+        />
+
         <TouchableOpacity
           style={styles.button}
-          onPress={() => { this._login(this.props.navigation) }}>
-          <Text style={{ color: '#FFF' }}>Login</Text>
+          onPress={() => { this._signup(this.props.navigation) }}>
+          <Text style={{ color: '#FFF' }}>Sign Up</Text>
         </TouchableOpacity>
-
-        <Button
-          onPress={() => {this.props.navigation.navigate('Signup')}}
-          title="Not registered yet, Sign Up"
-          color="#fff">
-        </Button>
       </View>
     );
   }
