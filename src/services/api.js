@@ -2,7 +2,7 @@ import { AsyncStorage } from 'react-native';
 import { create } from 'apisauce';
 
 const api = create({
-  baseURL: 'http://localhost:4000',
+  baseURL: 'https://elixir-auth-app.herokuapp.com',
 });
 
 api.addAsyncRequestTransform(request => async () => {
